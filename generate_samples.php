@@ -1,6 +1,5 @@
 <?php
-// tools/generate_samples.php
-
+declare(strict_types=1);
 require __DIR__ . '/vendor/autoload.php';
 
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;

@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Enum;
 
 enum MediaType: string

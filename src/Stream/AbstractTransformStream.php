@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Stream;
 
 use Psr\Http\Message\StreamInterface;

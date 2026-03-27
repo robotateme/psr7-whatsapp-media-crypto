@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Stream;
 
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;
