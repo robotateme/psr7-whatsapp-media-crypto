@@ -1,0 +1,24 @@
+{
+    "name": "oem/psr7-whatsapp-media-crypto",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Oem\\Psr7WhatsappMediaCrypto\\": "src/",
+            "Oem\\Psr7WhatsappMediaCrypto\\Test\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "robotateme",
+            "email": "jarwork884@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "symfony/var-dumper": "8.1.x-dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10"
+    }
+}
