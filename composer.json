@@ -16,7 +16,10 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/var-dumper": "8.1.x-dev"
+        "symfony/var-dumper": "8.1.x-dev",
+        "guzzlehttp/guzzle": "^7.0",
+        "guzzlehttp/psr7": "2.9.x-dev",
+      "ext-openssl": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^10"

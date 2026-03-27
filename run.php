@@ -6,9 +6,5 @@ use Oem\Psr7WhatsappMediaCrypto\Enum\MediaType;
 
 require_once "vendor/autoload.php";
 
-$mediaCrypto = new MediaCrypto(new MediaKeyExpander());
-$mediaCrypto->encrypt(
-    './test.txt',
-    MediaType::DOCUMENT->value,
-    'txt'
-);
+dd(glob(__DIR__ . '/samples/*.original'));
+
