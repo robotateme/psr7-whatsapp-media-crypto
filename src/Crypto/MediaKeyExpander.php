@@ -1,22 +1,35 @@
 <?php
 
 namespace Oem\Psr7WhatsappMediaCrypto\Crypto;
+use RuntimeException;
+
 final class MediaKeyExpander
 {
-    public function expand(string $mediaKey, string $info): array
+    private const string HKDF_ALGO = 'sha256';
+    private const int EXPANDED_LENGTH = 112;
+
+    public function expand(string $mediaKey, string $info): ExpandedKeys
     {
+        if (strlen($mediaKey) !== 32) {
+            throw new RuntimeException('Invalid media key length, expected 32 bytes');
+        }
+
         $expanded = hash_hkdf(
-            'sha256',
+            self::HKDF_ALGO,
             $mediaKey,
-            112,
+            self::EXPANDED_LENGTH,
             $info,
             ''
         );
 
-        return [
-            'iv'        => substr($expanded, 0, 16),
-            'cipherKey' => substr($expanded, 16, 32),
-            'macKey'    => substr($expanded, 48, 32),
-        ];
+        if ($expanded === false || strlen($expanded) !== self::EXPANDED_LENGTH) {
+            throw new RuntimeException('HKDF expansion failed');
+        }
+
+        return new ExpandedKeys(
+            iv: substr($expanded, 0, 16),
+            cipherKey: substr($expanded, 16, 32),
+            macKey: substr($expanded, 48, 32),
+        );
     }
 }
