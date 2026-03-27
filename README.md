@@ -208,3 +208,10 @@ if ($enc === false) {
 * зависит от OpenSSL
 
 ---
+
+## Use Cases
+
+- WhatsApp Business API media handling
+- Secure file storage (encryption at rest)
+- Streaming media (video/audio)
+- HTTP middleware encryption layer
