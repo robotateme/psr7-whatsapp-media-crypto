@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Crypto;
 use Oem\Psr7WhatsappMediaCrypto\Crypto\Contracts\MediaCryptoInterface;
 use RuntimeException;
 
 final readonly class MediaCrypto implements MediaCryptoInterface
 {
+    private const int MAC_LENGTH = 10;
     public function __construct(
         private MediaKeyExpander $expander
     ) {}
@@ -15,15 +17,19 @@ final readonly class MediaCrypto implements MediaCryptoInterface
         $enc = openssl_encrypt(
             $plain,
             'aes-256-cbc',
-            $keys['cipherKey'],
+            $keys->cipherKey,
             OPENSSL_RAW_DATA,
-            iv: $keys['iv']
+            iv: $keys->iv
         );
 
+        if ($enc === false) {
+            throw new RuntimeException('Unable to encrypt data');
+        }
+
         $mac = substr(
-            hash_hmac('sha256', $keys['iv'] . $enc, $keys['macKey'], true),
+            hash_hmac('sha256', $keys->iv . $enc, $keys->macKey, true),
             0,
-            10
+            self::MAC_LENGTH
         );
 
         return $enc . $mac;
@@ -33,13 +39,17 @@ final readonly class MediaCrypto implements MediaCryptoInterface
     {
         $keys = $this->expander->expand($mediaKey, $type);
 
+        if (strlen($cipher) < self::MAC_LENGTH) {
+            throw new RuntimeException('Ciphertext too short');
+        }
+
         $file = substr($cipher, 0, -10);
         $mac  = substr($cipher, -10);
 
         $calcMac = substr(
-            hash_hmac('sha256', $keys['iv'] . $file, $keys['macKey'], true),
+            hash_hmac('sha256', $keys->iv . $file, $keys->macKey, true),
             0,
-            10
+            self::MAC_LENGTH
         );
 
         if (!hash_equals($mac, $calcMac)) {
@@ -49,9 +59,9 @@ final readonly class MediaCrypto implements MediaCryptoInterface
         $plain = openssl_decrypt(
             $file,
             'aes-256-cbc',
-            $keys['cipherKey'],
+            $keys->cipherKey,
             OPENSSL_RAW_DATA,
-            $keys['iv']
+            $keys->iv
         );
 
         return $plain;
