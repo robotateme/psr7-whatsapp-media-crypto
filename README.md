@@ -8,6 +8,12 @@ Implements WhatsApp media encryption using PSR-7 streams.
 - HKDF key expansion
 - HMAC-SHA256 authentication
 - PSR-7 stream decorators
+- AES-256-CBC encryption / decryption
+- HKDF (SHA-256) key expansion (WhatsApp spec compliant)
+- HMAC-SHA256 authentication (10-byte truncated MAC)
+- PSR-7 stream decorators (encrypt/decrypt on read)
+- Sidecar generation for streaming media (video/audio)
+- Typed value objects instead of arrays
 
 
 ## Usage
