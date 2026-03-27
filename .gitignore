@@ -1,0 +1,45 @@
+# Composer
+/vendor/
+/composer.lock
+
+# PHPUnit
+/.phpunit.result.cache
+/phpunit.xml.cache
+
+# IDE
+/.idea/
+/.vscode/
+/*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env
+.env
+.env.local
+
+# Coverage
+/coverage/
+/build/
+.clover
+coverage.xml
+
+# Cache / temp
+/tmp/
+/cache/
+
+# Rector / PHP-CS-Fixer (если добавишь)
+.php-cs-fixer.cache
+rector.php
+
+# Infection (mutation testing)
+infection.log
+infection.json
+
+# Misc
+*.swp
+*.bak
