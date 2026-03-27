@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Test\Unit;
 
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;
