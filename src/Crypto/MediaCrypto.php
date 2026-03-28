@@ -43,8 +43,8 @@ final readonly class MediaCrypto implements MediaCryptoInterface
             throw new RuntimeException('Ciphertext too short');
         }
 
-        $file = substr($cipher, 0, -10);
-        $mac  = substr($cipher, -10);
+        $file = substr($cipher, 0, -self::MAC_LENGTH);
+        $mac  = substr($cipher, -self::MAC_LENGTH);
 
         $calcMac = substr(
             hash_hmac('sha256', $keys->iv . $file, $keys->macKey, true),
@@ -56,6 +56,10 @@ final readonly class MediaCrypto implements MediaCryptoInterface
             throw new RuntimeException('Invalid MAC');
         }
 
+        if (strlen($file) % 16 !== 0) {
+            throw new RuntimeException('Invalid ciphertext length');
+        }
+
         $plain = openssl_decrypt(
             $file,
             'aes-256-cbc',
@@ -63,6 +67,11 @@ final readonly class MediaCrypto implements MediaCryptoInterface
             OPENSSL_RAW_DATA,
             $keys->iv
         );
+
+        if ($plain === false) {
+            throw new RuntimeException('Unable to decrypt data');
+        }
+
 
         return $plain;
     }
