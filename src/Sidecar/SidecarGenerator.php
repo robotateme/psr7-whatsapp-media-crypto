@@ -2,9 +2,18 @@
 declare(strict_types=1);
 
 namespace Oem\Psr7WhatsappMediaCrypto\Sidecar;
-
+/**
+ * @psalm-immutable
+ * @psalm-suppress UnusedClass
+*/
 final class SidecarGenerator
 {
+    /**
+     * @param string $enc
+     * @param string $macKey
+     * @return string
+     * @psalm-pure
+     */
     public function generate(string $enc, string $macKey): string
     {
         $enc = substr($enc, 0, -10);
