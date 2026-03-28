@@ -6,6 +6,7 @@ use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaKeyExpander;
 use Oem\Psr7WhatsappMediaCrypto\Enum\MediaType;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use RuntimeException;
 
 class CryptoTest extends TestCase
@@ -28,6 +29,31 @@ class CryptoTest extends TestCase
         $this->assertSame($data, $dec);
     }
 
+    /**
+     * @throws RandomException
+     */
+    public function testMalformedCipherWithValidMacFailsGracefully(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid ciphertext length');
+
+        $key = random_bytes(32);
+        $expander = new MediaKeyExpander();
+        $keys = $expander->expand($key, MediaType::IMAGE->value);
+
+        $file = "\x01";
+        $mac = substr(
+            hash_hmac('sha256', $keys->iv . $file, $keys->macKey, true),
+            0,
+            10
+        );
+
+        $this->crypto->decrypt($file . $mac, $key, MediaType::IMAGE->value);
+    }
+
+    /**
+     * @throws RandomException
+     */
     public function testTamperedDataFails(): void
     {
         $this->expectException(RuntimeException::class);
