@@ -2,15 +2,25 @@
 declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Crypto;
 use Oem\Psr7WhatsappMediaCrypto\Crypto\Contracts\MediaCryptoInterface;
+use Override;
 use RuntimeException;
-
+/**
+ * @psalm-immutable
+*/
 final readonly class MediaCrypto implements MediaCryptoInterface
 {
     private const int MAC_LENGTH = 10;
+
+    /**
+     * @param MediaKeyExpander $expander
+     * @psalm-pure
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(
         private MediaKeyExpander $expander
     ) {}
 
+    #[Override]
     public function encrypt(string $plain, string $mediaKey, string $type): string
     {
         $keys = $this->expander->expand($mediaKey, $type);
@@ -35,6 +45,13 @@ final readonly class MediaCrypto implements MediaCryptoInterface
         return $enc . $mac;
     }
 
+    /**
+     * @param string $cipher
+     * @param string $mediaKey
+     * @param string $type
+     * @return string
+     */
+    #[Override]
     public function decrypt(string $cipher, string $mediaKey, string $type): string
     {
         $keys = $this->expander->expand($mediaKey, $type);

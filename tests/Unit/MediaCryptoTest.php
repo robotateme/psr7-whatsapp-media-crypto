@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
-namespace Unit;
+namespace Oem\Psr7WhatsappMediaCrypto\Test\Unit;
 
-use PHPUnit\Framework\TestCase;
+
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;
+use PHPUnit\Framework\TestCase;
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaKeyExpander;
 use Oem\Psr7WhatsappMediaCrypto\Enum\MediaType;
 use Random\RandomException;

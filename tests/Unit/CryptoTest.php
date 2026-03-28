@@ -18,6 +18,9 @@ class CryptoTest extends TestCase
         $this->crypto = new MediaCrypto(new MediaKeyExpander());
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testEncryptDecrypt(): void
     {
         $data = random_bytes(1024);

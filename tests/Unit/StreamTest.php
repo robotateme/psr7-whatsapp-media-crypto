@@ -8,6 +8,9 @@ use GuzzleHttp\Psr7\Utils;
 
 class StreamTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testReadTransformsData(): void
     {
         $stream = new Stream(Utils::streamFor('hello'));
@@ -16,6 +19,9 @@ class StreamTest extends TestCase
         $this->assertSame('HELLO', $result);
     }
 
+    /**
+     * @return void
+     */
     public function testEof(): void
     {
         $stream = new Stream(Utils::streamFor('abc'));

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Oem\Psr7WhatsappMediaCrypto\Stream;
 
+use Override;
 use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7\StreamDecoratorTrait;
 use RuntimeException;
@@ -16,19 +17,30 @@ abstract class AbstractTransformStream implements StreamInterface
     protected int $position = 0;
     protected StreamInterface $stream;
 
+    /**
+     * @param StreamInterface $stream
+     * @psalm-pure
+     */
     public function __construct(StreamInterface $stream)
     {
         $this->stream = $stream;
     }
 
+    /**
+     * @param string $data
+     * @return string
+     * @psalm-pure
+     */
     abstract protected function transform(string $data): string;
 
+    /**
+     * @return void
+     */
     protected function init(): void
     {
         if ($this->initialized) {
             return;
         }
-
         if ($this->stream->isSeekable()) {
             $this->stream->rewind();
         }
@@ -43,7 +55,12 @@ abstract class AbstractTransformStream implements StreamInterface
         $this->initialized = true;
     }
 
-    public function read($length): string
+    /**
+     * @param int $length
+     * @return string
+     */
+    #[Override]
+    public function read(int $length): string
     {
         $this->init();
 
@@ -57,6 +74,10 @@ abstract class AbstractTransformStream implements StreamInterface
         return $chunk;
     }
 
+    /**
+     * @return string
+     */
+    #[Override]
     public function getContents(): string
     {
         $this->init();
@@ -71,38 +92,75 @@ abstract class AbstractTransformStream implements StreamInterface
         return $remaining;
     }
 
+    /**
+     * @return bool
+     */
+    #[Override]
     public function eof(): bool
     {
         $this->init();
         return $this->position >= strlen($this->buffer);
     }
 
+    /**
+     * @return int
+     */
+    #[Override]
     public function tell(): int
     {
         return $this->position;
     }
 
+    /**
+     * @return void
+     */
+    #[Override]
     public function rewind(): void
     {
         $this->init();
         $this->position = 0;
     }
 
+    /**
+     * @return bool
+     * @psalm-mutation-free
+     * @psalm-pure
+     */
+    #[Override]
     public function isSeekable(): bool
     {
         return false;
     }
 
-    public function seek($offset, $whence = SEEK_SET): void
+    /**
+     * @param int $offset
+     * @param int $whence
+     * @return void
+     * @psalm-mutation-free
+     * @psalm-pure
+     */
+    #[Override]
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         throw new RuntimeException('Stream is not seekable');
     }
 
+    /**
+     * @return int|null
+     * @psalm-mutation-free
+     */
+    #[Override]
     public function getSize(): ?int
     {
         return $this->initialized ? strlen($this->buffer) : null;
     }
 
+    /**
+     * @return void
+     * @psalm-mutation-free
+     * @psalm-suppress ImpurePropertyAssignment
+     */
+    #[Override]
     public function close(): void
     {
         $this->buffer = '';
@@ -110,12 +168,22 @@ abstract class AbstractTransformStream implements StreamInterface
         $this->initialized = false;
     }
 
+    /**
+     * @return null
+     * @psalm-mutation-free
+     * @psalm-suppress UnusedMethodCall
+     */
+    #[Override]
     public function detach(): null
     {
         $this->close();
         return null;
     }
 
+    /**
+     * @return string
+     */
+    #[Override]
     public function __toString(): string
     {
         try {
