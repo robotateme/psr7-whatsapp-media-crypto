@@ -28,6 +28,26 @@ class CryptoTest extends TestCase
         $this->assertSame($data, $dec);
     }
 
+
+    public function testMalformedCipherWithValidMacFailsGracefully(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid ciphertext length');
+
+        $key = random_bytes(32);
+        $expander = new MediaKeyExpander();
+        $keys = $expander->expand($key, MediaType::IMAGE->value);
+
+        $file = "\x01";
+        $mac = substr(
+            hash_hmac('sha256', $keys->iv . $file, $keys->macKey, true),
+            0,
+            10
+        );
+
+        $this->crypto->decrypt($file . $mac, $key, MediaType::IMAGE->value);
+    }
+
     public function testTamperedDataFails(): void
     {
         $this->expectException(RuntimeException::class);
