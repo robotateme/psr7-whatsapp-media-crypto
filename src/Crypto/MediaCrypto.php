@@ -20,10 +20,15 @@ final readonly class MediaCrypto implements MediaCryptoInterface
         private MediaKeyExpander $expander
     ) {}
 
+    public function expandKeys(string $mediaKey, string $type): ExpandedKeys
+    {
+        return $this->expander->expand($mediaKey, $type);
+    }
+
     #[Override]
     public function encrypt(string $plain, string $mediaKey, string $type): string
     {
-        $keys = $this->expander->expand($mediaKey, $type);
+        $keys = $this->expandKeys($mediaKey, $type);
         $enc = openssl_encrypt(
             $plain,
             'aes-256-cbc',
@@ -54,7 +59,7 @@ final readonly class MediaCrypto implements MediaCryptoInterface
     #[Override]
     public function decrypt(string $cipher, string $mediaKey, string $type): string
     {
-        $keys = $this->expander->expand($mediaKey, $type);
+        $keys = $this->expandKeys($mediaKey, $type);
 
         if (strlen($cipher) < self::MAC_LENGTH) {
             throw new RuntimeException('Ciphertext too short');

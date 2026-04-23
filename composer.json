@@ -1,5 +1,5 @@
 {
-    "name": "oem/psr7-whatsapp-media-crypto",
+    "name": "robotateme/psr7-whatsapp-media-crypto",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -16,7 +16,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/var-dumper": "8.1.x-dev",
         "guzzlehttp/guzzle": "^7.0",
         "guzzlehttp/psr7": "2.9.x-dev",
       "ext-openssl": "*"

@@ -11,7 +11,9 @@ Implements WhatsApp media encryption using PSR-7 streams.
 - AES-256-CBC encryption / decryption
 - HKDF (SHA-256) key expansion (WhatsApp spec compliant)
 - HMAC-SHA256 authentication (10-byte truncated MAC)
-- PSR-7 stream decorators (encrypt/decrypt on read)
+- PSR-7 stream decorators
+- Incremental encryption without buffering the whole input in memory
+- MAC-verified decryption via temporary stream spool
 - Sidecar generation for streaming media (video/audio)
 - Typed value objects instead of arrays
 
@@ -23,6 +25,32 @@ $crypto = new MediaCrypto(new MediaKeyExpander());
 
 $encrypted = $crypto->encrypt($data, $key, 'WhatsApp Image Keys');
 $decrypted = $crypto->decrypt($encrypted, $key, 'WhatsApp Image Keys');
+```
+
+### Stream usage
+
+```php
+use GuzzleHttp\Psr7\Utils;
+use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;
+use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaKeyExpander;
+use Oem\Psr7WhatsappMediaCrypto\Enum\MediaType;
+use Oem\Psr7WhatsappMediaCrypto\Stream\DecryptingStream;
+use Oem\Psr7WhatsappMediaCrypto\Stream\EncryptingStream;
+
+$crypto = new MediaCrypto(new MediaKeyExpander());
+$key = random_bytes(32);
+
+$plainStream = Utils::streamFor(fopen('/path/to/file', 'rb'));
+$encryptingStream = new EncryptingStream($plainStream, $crypto, $key, MediaType::IMAGE);
+
+while (!$encryptingStream->eof()) {
+    $cipherChunk = $encryptingStream->read(8192);
+    // write chunk to network or storage
+}
+
+$cipherStream = Utils::streamFor($ciphertext);
+$decryptingStream = new DecryptingStream($cipherStream, $crypto, $key, MediaType::IMAGE);
+$plaintext = $decryptingStream->getContents();
 ```
 
 ---
@@ -94,37 +122,24 @@ new ExpandedKeys($iv, $cipherKey, $macKey);
 
 ---
 
-## Почему stream НЕ настоящий streaming?
+## Что именно здесь stream-ится по-настоящему?
 
-```php
-$this->buffer = $this->transform($data);
-```
-
-**Осознанное решение:**
-
-* CBC + HMAC требуют целостного ciphertext
-* нельзя корректно валидировать MAC по частям
-* buffering даёт:
-
-    * детерминированность
-    * простоту реализации
-    * меньше крипто-ошибок
-
-**Trade-off:**
-
-* больше потребление памяти
+* `EncryptingStream` читает source chunk-by-chunk
+* AES-CBC считается блоками без полного буферинга входа
+* HMAC считается инкрементально и дописывается в конце
 
 ---
 
-## Можно ли сделать настоящий streaming?
+## Почему decrypt не отдаёт plaintext сразу по мере чтения?
 
-Да, но:
+* в формате WhatsApp MAC лежит в конце ciphertext
+* до проверки MAC нельзя безопасно отдавать plaintext наружу
+* поэтому `DecryptingStream` читает ciphertext кусками, проверяет MAC и складывает plaintext во временный поток
 
-* нужно chunk-level MAC
-* усложняется API
-* возрастает риск ошибок
+**Trade-off:**
 
-→ в рамках задачи выбран безопасный и простой вариант
+* входной ciphertext не держится целиком в памяти
+* но plaintext становится доступен только после полной аутентификации
 
 ---
 
@@ -203,8 +218,8 @@ if ($enc === false) {
 
 ## Какие есть ограничения?
 
-* не оптимизировано для очень больших файлов (>100MB)
-* buffering вместо streaming
+* decrypt не является progressive-output stream из-за MAC в конце формата
+* при decrypt plaintext сначала пишется во временный поток
 * зависит от OpenSSL
 
 ---

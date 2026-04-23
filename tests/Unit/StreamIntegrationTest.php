@@ -44,4 +44,53 @@ class StreamIntegrationTest extends TestCase
 
         $this->assertSame($data, $result);
     }
+
+    /**
+     * @throws RandomException
+     */
+    public function testEncryptingStreamDoesNotConsumeWholeInputOnSmallRead(): void
+    {
+        $data = random_bytes(128 * 1024);
+        $key = random_bytes(32);
+
+        $crypto = new MediaCrypto(new MediaKeyExpander());
+        $source = Utils::streamFor($data);
+
+        $encStream = new EncryptingStream(
+            $source,
+            $crypto,
+            $key,
+            MediaType::IMAGE
+        );
+
+        $chunk = $encStream->read(32);
+
+        $this->assertNotSame('', $chunk);
+        $this->assertFalse($source->eof());
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testDecryptingStreamSupportsChunkedReads(): void
+    {
+        $data = random_bytes(8192 + 37);
+        $key = random_bytes(32);
+        $crypto = new MediaCrypto(new MediaKeyExpander());
+
+        $encrypted = $crypto->encrypt($data, $key, MediaType::IMAGE->value);
+        $decStream = new DecryptingStream(
+            Utils::streamFor($encrypted),
+            $crypto,
+            $key,
+            MediaType::IMAGE
+        );
+
+        $result = '';
+        while (!$decStream->eof()) {
+            $result .= $decStream->read(257);
+        }
+
+        $this->assertSame($data, $result);
+    }
 }
