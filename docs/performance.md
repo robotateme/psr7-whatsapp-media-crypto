@@ -1,35 +1,35 @@
-# Performance and Load Scenarios
+# Сценарии производительности и нагрузки
 
-The repository now includes both PHPUnit-based load smoke tests and a standalone benchmark script.
+В репозитории теперь есть как нагрузочные smoke-тесты на базе PHPUnit, так и отдельный benchmark-скрипт.
 
-## Included Scenarios
+## Доступные сценарии
 
-### PHPUnit performance suite
+### Набор performance-тестов для PHPUnit
 
-Run:
+Запуск:
 
 ```bash
 composer test:performance
 ```
 
-Covered cases:
+Покрываемые случаи:
 
-- boundary payload sizes: `0`, `1`, `15`, `16`, `17`, `65535`, `65536`, `65537`
-- chunked reads across boundary-sensitive sizes
-- large encrypt stream smoke test on `10MB`
-- large decrypt round-trip smoke test on `5MB + 13 bytes`
+- граничные размеры payload: `0`, `1`, `15`, `16`, `17`, `65535`, `65536`, `65537`
+- chunked reads на размерах, чувствительных к границам блоков
+- большой smoke-тест для encrypt stream на `10MB`
+- большой round-trip smoke test для decrypt на `5MB + 13 bytes`
 
-These tests are intended to validate behavior under load-like conditions without making default CI flaky.
+Эти тесты нужны для проверки поведения в условиях, близких к нагрузочным, но без превращения стандартного CI в нестабильный процесс.
 
-### Benchmark script
+### Benchmark-скрипт
 
-Run:
+Запуск:
 
 ```bash
 composer bench:stream
 ```
 
-Custom examples:
+Примеры запуска:
 
 ```bash
 php bench/stream_benchmark.php --scenario=encrypt --sizes=10M,100M --chunks=8192,65536
@@ -38,23 +38,23 @@ php bench/stream_benchmark.php --scenario=parallel --sizes=10M --workers=4 --ite
 php bench/stream_benchmark.php --scenario=boundary --chunks=1,16,257 --json
 ```
 
-## Benchmark Scenarios
+## Сценарии benchmark
 
-- `encrypt`: measures chunked encryption throughput
-- `decrypt`: measures chunked decrypt throughput
-- `boundary`: validates payload-size edge cases
-- `parallel`: forks multiple worker processes via `pcntl_fork` and runs parallel encrypt workloads
+- `encrypt`: измеряет пропускную способность chunked encryption
+- `decrypt`: измеряет пропускную способность chunked decrypt
+- `boundary`: проверяет граничные случаи по размеру payload
+- `parallel`: форкает несколько worker-процессов через `pcntl_fork` и запускает параллельные encrypt-нагрузки
 
-## What to Watch
+## Что стоит отслеживать
 
-- elapsed time
-- throughput in MB/s
-- peak memory delta
-- chunk-size sensitivity
-- behavior on large payloads
+- затраченное время
+- пропускную способность в MB/s
+- прирост peak memory
+- чувствительность к размеру chunk
+- поведение на больших payload
 
-## Recommended Workflow
+## Рекомендуемый порядок работы
 
-1. Run `composer test` for normal correctness checks.
-2. Run `composer test:performance` before merging stream-related changes.
-3. Run `composer bench:stream` when changing chunk sizes, buffering logic, MAC handling, or temporary stream behavior.
+1. Запускайте `composer test` для обычных проверок корректности.
+2. Запускайте `composer test:performance` перед слиянием изменений, связанных со stream-логикой.
+3. Запускайте `composer bench:stream`, когда меняете размеры chunk, логику буферизации, обработку MAC или поведение временного потока.

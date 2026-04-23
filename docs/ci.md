@@ -1,19 +1,19 @@
 # CI
 
-The repository includes two CI configurations:
+В репозитории есть две CI-конфигурации:
 
 - GitHub Actions: [`.github/workflows/php.yml`](../.github/workflows/php.yml)
 - GitLab CI: [`.gitlab-ci.yml`](../.gitlab-ci.yml)
 
-## Default Checks
+## Базовые проверки
 
 - `composer validate --strict`
 - `vendor/bin/phpunit`
 - `vendor/bin/psalm`
 
-## Why performance tests are separate
+## Почему тесты производительности вынесены отдельно
 
-Load scenarios are intentionally not part of the default CI path because they are slower and more sensitive to runner variance. They are available through:
+Нагрузочные сценарии намеренно не включены в стандартный CI-путь, потому что они медленнее и сильнее зависят от вариативности среды выполнения. Они доступны через:
 
 - `composer test:performance`
 - `composer bench:stream`

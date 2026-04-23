@@ -1,27 +1,27 @@
-# Overview
+# Обзор
 
-`psr7-whatsapp-media-crypto` implements WhatsApp media encryption on top of PSR-7 streams.
+`psr7-whatsapp-media-crypto` реализует шифрование медиафайлов WhatsApp поверх PSR-7 потоков.
 
-## Features
+## Возможности
 
-- AES-256-CBC encryption and decryption
-- HKDF-SHA256 key expansion compatible with WhatsApp media keys
-- HMAC-SHA256 authentication with 10-byte truncated MAC
-- PSR-7 stream decorators for encrypt and decrypt flows
-- Incremental encryption without buffering the whole input in memory
-- Decryption through a temporary spool stream after MAC verification
-- Sidecar generation for streaming media
-- Typed value objects instead of plain arrays
+- шифрование и дешифрование AES-256-CBC
+- расширение ключей через HKDF-SHA256, совместимое с WhatsApp media keys
+- аутентификация HMAC-SHA256 с усечённым 10-байтным MAC
+- PSR-7 декораторы потоков для encrypt и decrypt сценариев
+- инкрементальное шифрование без полного буферинга входа в памяти
+- дешифрование через временный spool-поток после проверки MAC
+- генерация sidecar для потокового медиа
+- типизированные value object вместо обычных массивов
 
-## Use Cases
+## Сценарии использования
 
-- WhatsApp Business API media handling
-- Encryption at rest for files
-- Streaming media upload pipelines
-- HTTP middleware or transport-layer stream transformation
+- обработка медиафайлов в WhatsApp Business API
+- шифрование файлов при хранении
+- пайплайны загрузки потокового медиа
+- трансформация потока на уровне HTTP middleware или транспортного слоя
 
-## Related Docs
+## Связанные документы
 
-- [Usage](usage.md)
-- [Design Notes](design.md)
-- [Performance and Load Scenarios](performance.md)
+- [Использование](usage.md)
+- [Заметки по устройству](design.md)
+- [Сценарии производительности и нагрузки](performance.md)

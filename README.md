@@ -2,24 +2,24 @@
 
 [![GitHub Actions](https://github.com/robotateme/psr7-whatsapp-media-crypto/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/robotateme/psr7-whatsapp-media-crypto/actions/workflows/php.yml)
 
-WhatsApp media encryption helpers built on PSR-7 streams.
+Утилиты для шифрования медиафайлов WhatsApp, построенные на PSR-7 потоках.
 
-## Docs
+## Документация
 
-- [Overview](docs/overview.md)
-- [Usage](docs/usage.md)
-- [Design Notes](docs/design.md)
+- [Обзор](docs/overview.md)
+- [Использование](docs/usage.md)
+- [Заметки по устройству](docs/design.md)
 - [CI](docs/ci.md)
-- [Performance and Load Scenarios](docs/performance.md)
+- [Сценарии производительности и нагрузки](docs/performance.md)
 
-## Quick Start
+## Быстрый старт
 
 ```bash
 composer install
 composer test
 ```
 
-Optional performance commands:
+Дополнительные команды для проверки производительности:
 
 ```bash
 composer test:performance

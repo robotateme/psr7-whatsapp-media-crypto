@@ -1,6 +1,6 @@
-# Usage
+# Использование
 
-## Basic API
+## Базовый API
 
 ```php
 use Oem\Psr7WhatsappMediaCrypto\Crypto\MediaCrypto;
@@ -38,8 +38,8 @@ $decryptingStream = new DecryptingStream($cipherStream, $crypto, $key, MediaType
 $plaintext = $decryptingStream->getContents();
 ```
 
-## Notes
+## Замечания
 
-- `EncryptingStream` is real incremental streaming.
-- `DecryptingStream` verifies the MAC first and exposes plaintext only after authentication completes.
-- For manual load checks, see [Performance and Load Scenarios](performance.md).
+- `EncryptingStream` реализует настоящее инкрементальное потоковое шифрование.
+- `DecryptingStream` сначала проверяет MAC и открывает plaintext только после завершения аутентификации.
+- Для ручных нагрузочных проверок см. [Сценарии производительности и нагрузки](performance.md).

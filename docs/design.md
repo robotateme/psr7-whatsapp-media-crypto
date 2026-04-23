@@ -1,40 +1,40 @@
-# Design Notes
+# Заметки по устройству
 
-## Why AES-256-CBC instead of GCM?
+## Почему AES-256-CBC, а не GCM?
 
-WhatsApp media encryption uses CBC plus HMAC. The library follows the protocol instead of replacing it with an AEAD mode.
+Шифрование медиафайлов WhatsApp использует CBC вместе с HMAC. Библиотека следует протоколу, а не заменяет его на AEAD-режим.
 
-## Why is the MAC truncated to 10 bytes?
+## Почему MAC обрезается до 10 байт?
 
-That is part of the WhatsApp media format. The library uses truncated HMAC-SHA256 exactly for compatibility.
+Это часть формата медиафайлов WhatsApp. Библиотека использует усечённый HMAC-SHA256 строго для совместимости.
 
-## Why verify MAC before decrypt?
+## Почему MAC проверяется до дешифрования?
 
-This avoids processing tampered ciphertext and protects against padding-oracle style failures.
+Это позволяет не обрабатывать подменённый ciphertext и защищает от ошибок класса padding oracle.
 
-## Why HKDF and `info` per media type?
+## Зачем HKDF и `info` для каждого типа медиа?
 
-HKDF performs deterministic key derivation from the 32-byte media key, and the `info` string provides domain separation between image, audio, video, and document payloads.
+HKDF выполняет детерминированное расширение ключа из 32-байтного media key, а строка `info` обеспечивает разделение доменов между image, audio, video и document payload.
 
-## What is truly streamed?
+## Что здесь действительно работает как потоковая обработка?
 
-- `EncryptingStream` reads the source chunk-by-chunk
-- AES-CBC is processed block-by-block
-- HMAC is updated incrementally and appended at the end
+- `EncryptingStream` читает источник по частям
+- AES-CBC обрабатывается блок за блоком
+- HMAC считается инкрементально и дописывается в конце
 
-## Why does decrypt not emit plaintext progressively?
+## Почему decrypt не отдаёт plaintext постепенно?
 
-The WhatsApp format places the MAC at the end of the ciphertext. Plaintext should not be released before the MAC is verified, so `DecryptingStream` spools plaintext into a temporary stream and makes it available only after full authentication.
+Формат WhatsApp размещает MAC в конце ciphertext. Plaintext нельзя безопасно отдавать до проверки MAC, поэтому `DecryptingStream` складывает plaintext во временный поток и открывает к нему доступ только после полной аутентификации.
 
-## Why use typed value objects?
+## Зачем использовать типизированные value object?
 
-`ExpandedKeys` avoids array-key mistakes and keeps key material explicit.
+`ExpandedKeys` помогает избежать ошибок с ключами массива и делает работу с ключевым материалом более явной.
 
-## Why does sidecar use ciphertext?
+## Почему sidecar строится по ciphertext?
 
-That matches the WhatsApp streaming model for random-access playback.
+Это соответствует потоковой модели WhatsApp для произвольного доступа при воспроизведении.
 
-## Protocol Constants
+## Константы протокола
 
 ```text
 IV = 16
@@ -43,8 +43,8 @@ macKey = 32
 MAC = 10
 ```
 
-## Current Limits
+## Текущие ограничения
 
-- decrypt is not a progressive-output stream
-- decrypt writes plaintext to a temporary stream before exposing it
-- the library depends on OpenSSL
+- decrypt не является потоком с постепенной выдачей результата
+- при decrypt plaintext сначала пишется во временный поток
+- библиотека зависит от OpenSSL
