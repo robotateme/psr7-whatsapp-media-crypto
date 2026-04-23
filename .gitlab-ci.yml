@@ -1,0 +1,42 @@
+image: php:8.4-cli
+
+stages:
+  - validate
+  - test
+  - static
+
+variables:
+  COMPOSER_ALLOW_SUPERUSER: "1"
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.composer-cache"
+
+cache:
+  key:
+    files:
+      - composer.lock
+  paths:
+    - .composer-cache/
+    - vendor/
+
+before_script:
+  - apt-get update
+  - apt-get install -y git unzip libonig-dev libxml2-dev
+  - docker-php-ext-install mbstring dom simplexml
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  - rm composer-setup.php
+  - composer install --prefer-dist --no-progress --no-interaction
+
+composer:validate:
+  stage: validate
+  script:
+    - composer validate --strict
+
+phpunit:
+  stage: test
+  script:
+    - vendor/bin/phpunit
+
+psalm:
+  stage: static
+  script:
+    - vendor/bin/psalm

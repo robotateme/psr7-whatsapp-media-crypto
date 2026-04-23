@@ -2,6 +2,19 @@
 
 Implements WhatsApp media encryption using PSR-7 streams.
 
+## CI
+
+The repository includes both CI configs:
+
+- GitHub Actions: [`.github/workflows/php.yml`](.github/workflows/php.yml)
+- GitLab CI: [`.gitlab-ci.yml`](.gitlab-ci.yml)
+
+Both pipelines run the same checks:
+
+- `composer validate --strict`
+- `vendor/bin/phpunit`
+- `vendor/bin/psalm`
+
 ## Features
 
 - AES-256-CBC encryption
@@ -221,6 +234,7 @@ if ($enc === false) {
 * decrypt не является progressive-output stream из-за MAC в конце формата
 * при decrypt plaintext сначала пишется во временный поток
 * зависит от OpenSSL
+* `psalm` в CI требует PHP `8.4.3+` из-за текущей ветки `vimeo/psalm`
 
 ---
 
