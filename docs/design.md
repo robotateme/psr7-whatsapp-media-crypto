@@ -48,4 +48,3 @@ MAC = 10
 - decrypt is not a progressive-output stream
 - decrypt writes plaintext to a temporary stream before exposing it
 - the library depends on OpenSSL
-- current CI static analysis uses a `vimeo/psalm` line that expects PHP `8.4.3+`

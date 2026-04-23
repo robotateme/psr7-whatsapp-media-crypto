@@ -19,7 +19,6 @@ abstract class AbstractTransformStream implements StreamInterface
 
     /**
      * @param StreamInterface $stream
-     * @psalm-pure
      */
     public function __construct(StreamInterface $stream)
     {
