@@ -35,6 +35,8 @@ composer bench:stream
 ```bash
 php bench/stream_benchmark.php --scenario=encrypt --sizes=10M --chunks=8192,65536 --iterations=3
 php bench/stream_benchmark.php --scenario=decrypt --sizes=10M --chunks=8192,65536 --iterations=3
+php bench/stream_benchmark.php --scenario=encrypt --sizes=1G --chunks=8192 --iterations=1
+php bench/stream_benchmark.php --scenario=decrypt --sizes=1G --chunks=8192 --iterations=1
 php bench/stream_benchmark.php --scenario=parallel --sizes=10M --workers=4 --iterations=2
 ```
 
@@ -44,6 +46,8 @@ php bench/stream_benchmark.php --scenario=parallel --sizes=10M --workers=4 --ite
 - `encrypt`, `10MB`, `chunk=65536`, `3` итерации: `60.89 MB/s`, `0.4927 s`
 - `decrypt`, `10MB`, `chunk=8192`, `3` итерации: `75.22 MB/s`, `0.3988 s`
 - `decrypt`, `10MB`, `chunk=65536`, `3` итерации: `70.44 MB/s`, `0.4259 s`
+- `encrypt`, `1GB`, `chunk=8192`, `1` итерация: `86.53 MB/s`, `11.8346 s`
+- `decrypt`, `1GB`, `chunk=8192`, `1` итерация: `69.50 MB/s`, `14.7338 s`
 - `parallel`, `4` worker, `10MB`, `2` итерации: `161.57 MB/s`, `0.4951 s`
 
 По метрике `peak_delta_bytes` дополнительный пик памяти в этих прогонах не был зафиксирован, что согласуется с текущей потоковой реализацией `EncryptingStream`.
