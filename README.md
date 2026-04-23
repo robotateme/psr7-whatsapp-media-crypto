@@ -1,5 +1,7 @@
 # PSR-7 WhatsApp Media Crypto
 
+[![GitHub Actions](https://github.com/robotateme/psr7-whatsapp-media-crypto/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/robotateme/psr7-whatsapp-media-crypto/actions/workflows/php.yml)
+
 Implements WhatsApp media encryption using PSR-7 streams.
 
 ## CI
